@@ -1,0 +1,35 @@
+---
+version: "3.9"
+services:
+  uptime-kuma:
+    container_name: uptime-kuma
+    image: louislam/uptime-kuma:latest
+    restart: unless-stopped
+    ports:
+      - 3001:3001
+    networks:
+      - tunnel
+    volumes:
+      - ~/containers/uptime-kuma/config/:/app/data
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+
+  cloudflared:
+    container_name: cloudflared
+    image: cloudflare/cloudflared:latest
+    command: tunnel run
+    restart: always
+    env_file:
+      - tunnel_token.env
+    networks:
+      - tunnel
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+
+networks:
+  tunnel:
+    name: tunnel
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.19.0.0/16

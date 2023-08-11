@@ -1,0 +1,22 @@
+version: '3.9'
+
+services:
+  watchtower:
+    image: containrrr/watchtower:latest
+    restart: always
+    networks:
+      - socket
+    environment:
+      - TZ=Europe/Amsterdam
+      - WATCHTOWER_CLEANUP=true
+      - WATCHTOWER_LABEL_ENABLE=true
+      - WATCHTOWER_INCLUDE_RESTARTING=true
+      - WATCHTOWER_SCHEDULE=0 0 0 * * *
+      - DOCKER_HOST=tcp://socket-proxy:2375
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+
+networks:
+  socket:
+    name: socket
+    external: true
